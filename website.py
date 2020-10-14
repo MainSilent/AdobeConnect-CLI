@@ -1,10 +1,15 @@
 import os
+import re
 import sys
 import time
 import requests
+import webbrowser
 from bs4 import BeautifulSoup
+from urllib.parse import unquote
 
 class Website:
+	session = requests.Session()
+
 	def __init__(self, identity):
 		self.identity = identity
 		self.name = "User"
@@ -15,11 +20,10 @@ class Website:
 		while (True):
 			try:
 				# Get Token
-				page = requests.get(url_login)
+				page = self.session.get(url_login)
 				soup = BeautifulSoup(page.content, 'html.parser')
 				results = soup.find(id='login')
 				token = results.find_all('input')[1]['value']
-				self.session = 'MoodleSession='+page.cookies["MoodleSession"]
 
 				# send login request
 				payload = {
@@ -27,8 +31,7 @@ class Website:
 					'password': self.identity,
 					'logintoken': token
 				}
-				headers = {'Cookie': self.session}
-				response = requests.post(url_login, data=payload, headers=headers)
+				response = self.session.post(url_login, data=payload)
 
 				if "logintoken" in response.text:
 					os.system('cls')
@@ -43,10 +46,37 @@ class Website:
 				print("\nProblem with login, try again.")
 				continue
 
-	def openClass(self, lesson = "دینی"):
+	def openClass(self, lesson):
 		elems = self.page.find_all("div", class_="media-body")
+		found = False
+		# do all the redirects 😥
 		for elem in elems:
 			name = elem.find("h4").find("a").text
 			url = elem.find("h4").find("a")["href"]
 			if lesson in name:
-				print(url)
+				found = True
+				response = self.session.get(url)
+				soup = BeautifulSoup(response.content, 'html.parser')
+
+				url = soup.find_all("div", class_="activityinstance")[1].find("a")["href"]
+				response = self.session.get(url)
+				soup = BeautifulSoup(response.content, 'html.parser')
+
+				onclick = soup.find_all("input")[3]["onclick"]
+				url = re.search("(?P<url>https?://[^\s]+)", onclick).group("url").strip("',")
+
+				# Adobe Connect URL
+				response = self.session.get(url)
+				soup = BeautifulSoup(response.content, 'html.parser')
+				script = soup.find_all("script")[5]
+				script_regex = re.search("https?[^\s]+;", str(script)).group().strip("';")+";"
+				adobe_url = "connectpro:" + script_regex
+
+				webbrowser.open(unquote(adobe_url))
+				break
+
+		if not found: 
+			print("Can't find the lesson")
+			return False
+
+		return True
