@@ -23,7 +23,7 @@ class Program:
 				break
 
 		if not exist: 
-			print("Can't find the day.")
+			print("Can't find this day.")
 			return
 
 		return lessons
