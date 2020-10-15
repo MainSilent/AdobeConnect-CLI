@@ -17,8 +17,7 @@
     </day>
 
     <day name="Thu">
-        <lesson name="sport" name_in_website="ورزش" stime="20:55" etime="22:00"/>
-        <lesson name="math" name_in_website="حسابان" stime="20:49" etime="21:11"/>
-        <lesson name="chemistry" name_in_website="شیمی" stime="21:00" etime="22:30"/>
+        <lesson name="math" name_in_website="حسابان" stime="7:30" etime="8:15"/>
+        <lesson name="chemistry" name_in_website="شیمی" stime="9:00" etime="9:45"/>
     </day>
 </data>

@@ -46,13 +46,13 @@ class Website:
 					break
 			except:
 				os.system('cls')
-				print("Problem with login, try again.")
-				continue
+				self.status = [408, "Problem with login."]
+				return
 
 	def openClass(self, lesson):
 		try:
 			if "logintoken" in str(self.page) or self.page == "":
-				print("Session faild, try to login.")
+				print("Session faild, try to login again.")
 				self.login()
 
 			elems = self.page.find_all("div", class_="media-body")
@@ -84,9 +84,9 @@ class Website:
 					break
 
 			if not found: 
-				print("Can't find the lesson")
+				self.status = [404, "Can't find the lesson."]
 				return False
-
+			self.status = [0, '']	
 			return True
 
 		except Exception as e:
