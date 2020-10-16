@@ -23,7 +23,7 @@ while True:
 		continue
 
 # init registry
-keyVal = 'Software\\Goshad'
+keyVal = 'Software\\AdobeConnect-CLI'
 try:
     key = OpenKey(HKEY_CURRENT_USER, keyVal, 0, KEY_ALL_ACCESS)
 except:
